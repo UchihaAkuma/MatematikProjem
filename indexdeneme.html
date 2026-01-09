@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematik Evreni | Final</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Great+Vibes&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="site.css">
+    
+    <style>
+        /* --- ÖZEL EKLEMELER (Mısır Kısmı İçin) --- */
+        .misir-ozel .highlight {
+            font-weight: bold;
+            color: #d9534f;
+            background: #fff0f0;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .misir-ozel .formula-box {
+            background-color: #eee;
+            padding: 15px;
+            border-left: 5px solid #555;
+            margin: 20px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+        }
+        .misir-ozel .formula-box ul { list-style-type: none; padding: 0; }
+        .misir-ozel .formula-box li { margin-bottom: 5px; }
+        
+        .misir-ozel blockquote {
+            background: #fff;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 5px solid #d9534f;
+            font-style: italic;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .misir-ozel .image-container { text-align: center; margin: 20px 0; }
+        .misir-ozel img { max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+    <div id="progress-container"><div id="progress-bar"></div></div>
+    <div id="preloader"><div class="loader-symbol">∑</div><div class="loader-text">YÜKLENİYOR...</div></div>
+
+    <div class="bg-symbols">
+        <div class="symbol s1">π</div><div class="symbol s2">∑</div><div class="symbol s3">∫</div><div class="symbol s4">∞</div><div class="symbol s5">x</div>
+    </div>
+
+    <button id="arsiv-btn" class="nav-btn" onclick="arsivAc()">📚 Kütüphane</button>
+    <button id="mod-btn" class="nav-btn" onclick="modDegistir()">🌙</button>
+
+    <header class="hero">
+        <h1 class="reveal">Matematiğin Evreni</h1>
+        <div class="soz-kutusu reveal">
+            <p id="hero-soz" style="font-size: 1.1rem; font-style:italic;">Yükleniyor...</p>
+            <button onclick="yeniSozGetir()" style="background:transparent; border:1px solid white; color:white; padding:5px 15px; border-radius:15px; cursor:pointer; font-size:0.9rem;">🔄 Değiştir</button>
+        </div>
+        <button class="kesfet-btn reveal" onclick="document.getElementById('amac-bolumu').scrollIntoView({behavior:'smooth'})">Keşfetmeye Başla ▼</button>
+    </header>
+
+    <section id="amac-bolumu">
+        <div class="amac-karti reveal">
+            <h2 style="color: var(--primary);">Bu Sitenin Amacı Nedir?</h2>
+            <p style="line-height: 1.8; margin-bottom: 20px;">
+                Matematik sadece sayılardan ibaret değildir; evrenin dilidir. Bu site, Babil'den günümüze matematiğin büyüleyici serüvenini anlatmak için tasarlandı.
+            </p>
+            <button onclick="quizBaslat()" style="margin-top:20px; padding:15px 40px; background:var(--accent); color:white; border:none; border-radius:10px; font-size:1.1rem; cursor:pointer; font-weight:bold; width: 100%;">🧠 Bilgini Test Et</button>
+        </div>
+    </section>
+
+    <section id="laboratuvar">
+        <h2 style="text-align:center; margin-bottom:30px; color:var(--text);" class="reveal">Matematik Laboratuvarı 🧪</h2>
+        <div class="lab-container">
+            <div class="lab-karti reveal">
+                <h3 style="color: var(--primary);">01 | Taban Çevirici</h3>
+                <input type="number" class="lab-input" placeholder="Sayı gir (örn: 255)" oninput="cevirici(this.value)">
+                <div class="sonuc-kutusu"><span class="sonuc-etiket">BIN:</span><span id="bin-sonuc">0</span></div>
+                <div class="sonuc-kutusu"><span class="sonuc-etiket">HEX:</span><span id="hex-sonuc">0</span></div>
+            </div>
+            <div class="lab-karti reveal">
+                <h3 style="color: var(--accent);">02 | Altın Oran (φ)</h3>
+                <input type="number" class="lab-input" placeholder="Kısa kenar (örn: 100)" oninput="altinOran(this.value)">
+                <div class="sonuc-kutusu"><span class="sonuc-etiket">UZUN:</span><span id="uzun-sonuc">0</span></div>
+                <div class="sonuc-kutusu"><span class="sonuc-etiket">TOPLAM:</span><span id="toplam-sonuc">0</span></div>
+            </div>
+        </div>
+    </section>
+
+    <div style="height: 100px;"></div>
+
+    <div id="quiz-modal">
+        <div class="quiz-kutu">
+            <div id="quiz-soru-alani">
+                <h3 id="soru-baslik">Soru 1/10</h3>
+                <p id="soru-metni" style="font-size:1.1rem; font-weight:600; margin-bottom:20px;">...</p>
+                <div id="secenekler"></div>
+            </div>
+            <div id="quiz-sonuc-alani" style="display:none;">
+                <h2>Bitti! 🥳</h2>
+                <p style="font-size:2rem; font-weight:bold; color:var(--primary);">Puan: <span id="puan">0</span></p>
+                <button onclick="document.getElementById('quiz-modal').style.display='none'" style="padding:10px 30px; background:#333; color:white; border:none; border-radius:5px; cursor:pointer;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tam-ekran-arsiv">
+        <div style="padding:20px; background:#eee; display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="margin:0; color:#333; font-size: 1.2rem;">Ansiklopedi</h2>
+            <button onclick="arsivKapat()" style="background:#ff4757; color:white; border:none; padding:8px 15px; cursor:pointer; border-radius:5px; font-weight:bold;">KAPAT</button>
+        </div>
+        <div class="arsiv-body">
+            <div class="arsiv-menu">
+                <button class="arsiv-btn" onclick="konuGoster('babil')">🏛️ Mezopotamya</button>
+                <button class="arsiv-btn" onclick="konuGoster('misir')">📐 Mısır & Piramit</button>
+                <button class="arsiv-btn" onclick="konuGoster('yunan')">🏺 Antik Yunan</button>
+                <button class="arsiv-btn" onclick="konuGoster('modern')">🚀 Modern Çağ</button>
+            </div>
+            <div class="arsiv-icerik">
+                
+                <div id="babil" class="arsiv-konu">
+                    <div class="misir-ozel"> <h1>Babil Matematiği ve Astronomi</h1>
+                        <div class="sag-gorsel-kutusu">
+                            <img src="Babil-Rakamları.jpg" alt="Babil Rakamları" class="konu-resmi">
+                            <p class="gorsel-aciklama">Babil Rakamları (Kamu Malı)</p>
+                        </div>
+                        <p>Babilliler, 60 tabanlı (altmışlık) sayı sistemini kullanarak matematikte devrim yarattılar. Bugün bir saatin 60 dakika, bir dakikanın 60 saniye olmasının sebebi Sümer ve Babil matematiğidir.</p>
+                        <p>Konum ilkesini (basamak değeri) bulan ilk uygarlıklardan biridir ancak sıfır rakamını bir boşluk olarak kullanmışlardır.</p>
+                        <div style="clear: both;"></div>
+                    </div>
+                </div>
+
+                <div id="misir" class="arsiv-konu">
+                    <div class="misir-ozel">
+                        <h1>Mısır Piramitleri ve Matematik</h1>
+                        
+                        <p style="font-size:0.9rem; color:#666; margin-bottom:20px;"><em>Yeryüzünde en esrarengiz yapılardan biri şüphesiz Mısır Piramitleridir.</em></p>
+
+                        <p>Piramitler bir geometrik eser niteliğinde insanoğlunu büyülemektedir. Platon'un akademisine yazdığı “Geometri bilmeyenler giremez” ibaresini piramitlerin girişlerine yazmak gerekirdi.</p>
+
+                        <p class="highlight">Okura Önemli Bir Not: Lütfen yazıyı okurken şaşkınlıktan şok olmayınız.</p>
+
+                        <p>Mısır Piramitlerinin yükseklik, taban alanı ve yükselik katsayıları matematikte en önemli üç sabiti içerir. Bunlar pi, fi ve e sayılarıdır.</p>
+
+                        <div class="image-container">
+                            <img src="misir-piramitleri-ve-matematik.jpg" alt="Piramit Matematiği">
+                        </div>
+
+                        <p>Yukarıda resimde görülen kodlamaları doğrulamaya çalışalım:</p>
+
+                        <div class="formula-box">
+                            <ul>
+                                <li>4 x 51.85° / 76.30° = e (99.998%)</li>
+                                <li>tan 51.85° = 4 / π (99.99%)</li>
+                                <li>cos 51.85° = 1 / Φ (99.95%)</li>
+                                <li>sin 51.85° = 4 / πΦ (99.94%)</li>
+                            </ul>
+                        </div>
+
+                        <p>Bu hesaplamalar, Mısırlıların Pi (π) sayısını ve Altın Oran'ı (Φ) bildiklerini kanıtlar niteliktedir. Büyük Piramidin taban çevresi yüksekliğinin 2 katına bölündüğünde Pi sayısı elde edilir.</p>
+
+                        <p>Ayrıca piramidin konumu (enlem), ışık hızının rakamlarıyla (299,792,458 m/s) şaşırtıcı bir benzerlik gösterir (29.9792458°N).</p>
+
+                        <blockquote>
+                            “İnsanlık, teknolojiyi ve bilimi eskiden çok üst düzey bir şekilde kullandığı bazı felaketler sonucu tüm teknolojinin sıfırlandığı yönündeki teori ağır basmaktadır.”
+                        </blockquote>
+                        
+                        <div class="references">
+                            <h3>Referanslar</h3>
+                            <ul>
+                                <li>Brown, S; Dünyanın Sırları ve Gizemleri</li>
+                                <li>ancient-origins.net</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="yunan" class="arsiv-konu">
+                    <h2>Yunan Felsefesi</h2>
+                    <p>Pisagor ve Öklid ile ispat kavramı doğdu. "Neden?" sorusunu sordular. Matematiği soyut bir bilim haline getirdiler.</p>
+                </div>
+
+                <div id="modern" class="arsiv-konu">
+                    <h2>Modern Teknoloji</h2>
+                    <p>Newton Kalkülüs'ü buldu, Leibniz ile yarıştı. Alan Turing bilgisayarların temelini attı.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- SADE VE ÇALIŞAN JAVASCRIPT ---
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('preloader').style.opacity = '0';
+                setTimeout(() => { document.getElementById('preloader').style.display = 'none'; }, 500);
+            }, 1000);
+            yeniSozGetir(); 
+            sorulariKaristir();
+        });
+
+        // SEKME DEĞİŞTİRME (EN ÖNEMLİ KISIM BURASI)
+        function konuGoster(id) {
+            // Hepsini gizle
+            document.querySelectorAll('.arsiv-konu').forEach(e => e.style.display='none');
+            // İsteneni aç
+            document.getElementById(id).style.display='block';
+        }
+
+        // DİĞER FONKSİYONLAR
+        function yeniSozGetir() { 
+            const sozler = ['"Matematik, evrenin dilidir." - Galileo', '"Sayılar yalan söylemez."'];
+            document.getElementById('hero-soz').innerText = sozler[Math.floor(Math.random()*sozler.length)]; 
+        }
+        function modDegistir() { document.body.classList.toggle('koyu-mod'); }
+        function arsivAc() { document.getElementById('tam-ekran-arsiv').classList.add('aktif'); }
+        function arsivKapat() { document.getElementById('tam-ekran-arsiv').classList.remove('aktif'); }
+        
+        // HESAPLAMA ARAÇLARI
+        function cevirici(val) {
+            if(val === "") { document.getElementById('bin-sonuc').innerText="0"; document.getElementById('hex-sonuc').innerText="0"; return; }
+            let num = parseInt(val);
+            document.getElementById('bin-sonuc').innerText = num.toString(2);
+            document.getElementById('hex-sonuc').innerText = num.toString(16).toUpperCase();
+        }
+        function altinOran(val) {
+            if(val === "") { document.getElementById('uzun-sonuc').innerText="0"; document.getElementById('toplam-sonuc').innerText="0"; return; }
+            let kisa = parseFloat(val); let uzun = kisa * 1.618;
+            document.getElementById('uzun-sonuc').innerText = uzun.toFixed(2);
+            document.getElementById('toplam-sonuc').innerText = (kisa+uzun).toFixed(2);
+        }
+
+        // QUIZ SİSTEMİ
+        const sorular = [ { s: "Algoritma ismi kime aittir?", c: ["Newton", "Harezmi", "Einstein", "Öklid"], d: 1 }, { s: "Geometrinin babası kimdir?", c: ["Pisagor", "Öklid", "Arşimet", "Thales"], d: 1 } ];
+        function sorulariKaristir() { sorular.sort(() => Math.random() - 0.5); }
+        let aktifSoru = 0, puan = 0;
+        function quizBaslat() { aktifSoru = 0; puan = 0; document.getElementById('quiz-modal').style.display='flex'; document.getElementById('quiz-soru-alani').style.display='block'; document.getElementById('quiz-sonuc-alani').style.display='none'; soruGoster(); }
+        function soruGoster() { let s = sorular[aktifSoru]; document.getElementById('soru-baslik').innerText = `Soru ${aktifSoru+1}/${sorular.length}`; document.getElementById('soru-metni').innerText = s.s; let h = ""; s.c.forEach((o, i) => { h += `<button class="secenek-btn" onclick="cevapla(this, ${i})">${o}</button>`; }); document.getElementById('secenekler').innerHTML = h; }
+        function cevapla(b, i) { let d = sorular[aktifSoru].d; let btns = document.getElementsByClassName('secenek-btn'); for(let bt of btns) bt.disabled=true; if(i===d) { b.classList.add('dogru'); puan+=20; } else { b.classList.add('yanlis'); btns[d].classList.add('dogru'); } setTimeout(() => { aktifSoru++; if(aktifSoru<sorular.length) soruGoster(); else { document.getElementById('quiz-soru-alani').style.display='none'; document.getElementById('quiz-sonuc-alani').style.display='block'; document.getElementById('puan').innerText=puan; } }, 1000); }
+    </script>
+</body>
+</html>
